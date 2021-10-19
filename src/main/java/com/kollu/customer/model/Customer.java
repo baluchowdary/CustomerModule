@@ -3,16 +3,18 @@ package com.kollu.customer.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.GenericGenerator;
+
 @Entity
-@Table(name="customer_details")
+@Table(name="Customer_Details")
 public class Customer {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GenericGenerator(name = "Cust_Id_id", strategy = "com.kollu.customer.util.CustomerIdGenerator")
+	@GeneratedValue(generator = "Cust_Id_id")  
 	@Column(name="Customer_Id")
 	private long customerId;
 	
