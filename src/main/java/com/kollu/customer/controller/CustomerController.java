@@ -1,7 +1,9 @@
 package com.kollu.customer.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +17,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import com.kollu.customer.model.Customer;
+import com.kollu.customer.model.CustomerResponse;
 import com.kollu.customer.service.CustomerRepository;
 
 @RestController
@@ -46,8 +50,7 @@ public class CustomerController {
 		return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
-	} //method end
-	
+	} 
 	
 	/*Save customer details*/
 	
@@ -113,4 +116,60 @@ public class CustomerController {
 		}
 	}
 	
-}
+/*	Get the customer details by using {custId}*/
+	@GetMapping("/custById/{custId}")
+	public ResponseEntity<Customer> getCustomerById(@PathVariable("custId") long cid) {
+		Optional<Customer> custData = customerRepository.findById(cid);
+
+		if (custData.isPresent()) {
+			return new ResponseEntity<>(custData.get(), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+	}
+	
+	/*	Get the customer details by using {custId}*/
+	@GetMapping("/custByIdd/{custId}")
+	public CustomerResponse getCustomerByIdd(@PathVariable("custId") long cid) {
+		System.out.println("Customer getCustomerByIdd method");
+		
+		long custByID = 0; 
+		CustomerResponse custResponse = null;
+		ResponseEntity<CustomerResponse> responseEntity;
+		
+		Optional<Customer> custData = customerRepository.findById(cid);
+
+		if(custData.isPresent()) {
+			custByID = custData.get().getCustomerId();
+			System.out.println("custByID : "+custByID);
+		}
+		
+		Map<String, Long> uriVariables = new HashMap<>();
+		uriVariables.put("bankCustId", custByID);
+		
+		
+		responseEntity =new RestTemplate().getForEntity("http://localhost:9096/custBank/bankCustByIdd/{bankCustId}", 
+						CustomerResponse.class, uriVariables);
+		System.out.println("responseEntity.getBody() : "+responseEntity.getBody()); 
+		custResponse = responseEntity.getBody();
+		
+		
+		if (custResponse != null) {	
+			return new CustomerResponse(
+					custResponse.getBankCustId(), 
+					custResponse.getBankCustFirstName(), custResponse.getBankCustLastName(), 
+					custResponse.getBankCustMobileNumber(), custResponse.getBankCustGender(),
+					custResponse.getCustBankName(), 
+					custResponse.getCustBankIfscCode(), custResponse.getCustBankBranchAddress(), custResponse.getCustBankAccountNo());
+			
+		} else {
+			System.out.println("customer else block");
+			return new CustomerResponse();
+		} 
+		
+		//return null;
+		
+	}//method end
+	
+	
+} //class end
