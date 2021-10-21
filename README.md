@@ -54,7 +54,7 @@ http://localhost:9096/custBank/savecustbankdetails
 
 }
 
-SELETE:
+DELETE:
 
 http://localhost:9095/customer/27
 
