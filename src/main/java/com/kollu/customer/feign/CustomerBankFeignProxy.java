@@ -1,6 +1,7 @@
 package com.kollu.customer.feign;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -12,6 +13,8 @@ import com.kollu.customer.model.CustomerResponse;
 public interface CustomerBankFeignProxy {
 	
 	@GetMapping("/custBank/bankCustByIdd/{bankCustId}")
-	public CustomerResponse getCustomerDetailsById(@PathVariable("bankCustId") long cid);
+	//public CustomerResponse getCustomerDetailsById(@PathVariable("bankCustId") long cid);
+	
+	public ResponseEntity<CustomerResponse> getCustomerDetailsById(@PathVariable("bankCustId") long cid);
 
 }

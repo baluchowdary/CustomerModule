@@ -18,7 +18,7 @@ public class CircitBreaker {
 	private Logger logger = LoggerFactory.getLogger(CircitBreaker.class);
 	@GetMapping("/kollu")
 	//retry 5 times and each between request waiting duration 300 sec's
-	//@Retry(name="kollu-retry", fallbackMethod="fallBackMethodResponse")
+	@Retry(name="custRetryFallback", fallbackMethod="fallBackMethodResponse")
 	
 	//once threshoul reach to 50% status will update from CLOSE to OPEN
 	//@CircuitBreaker(name="kollu-retry", fallbackMethod="fallBackMethodResponse")
@@ -27,11 +27,11 @@ public class CircitBreaker {
 	//@RateLimiter(name="kollu-retry", fallbackMethod="fallBackMethodResponse")
 	
 	//at a time 10 users can send requests
-	@Bulkhead(name="kollu-retry", fallbackMethod="fallBackMethodResponse")
+	//@Bulkhead(name="kollu-retry", fallbackMethod="fallBackMethodResponse")
 	public String getResponse() {
-		logger.info("I am from resilience4J!!"); 
+		logger.info("I am from resilience4J!!!!"); 
 		ResponseEntity<String> entity = new RestTemplate().getForEntity("http://localhost:87611/", String.class);
-		
+		System.out.println("entity.getBody() ::"+entity.getBody()); 
 		return entity.getBody(); 
 	}//end
 	
