@@ -1,5 +1,7 @@
 package com.kollu.customer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -19,18 +21,25 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class CustomerModuleApplication {
 
+	private static Logger logger = LoggerFactory.getLogger(CustomerModuleApplication.class);
+	
 	public static void main(String[] args) {
-		System.out.println("i am from mail clazz");
+		System.out.println("Console:: i am from Customer module");
+		logger.info("i am from Customer module");
 		SpringApplication.run(CustomerModuleApplication.class, args);
 	}
 
 	@Bean
 	   public Docket productApi() {
+		System.out.println("Console:: CustomerModuleApplication - Swagger - productApi method");
+		logger.info("CustomerModuleApplication - Swagger - productApi method");
 	      return new Docket(DocumentationType.SWAGGER_2).apiInfo(apiInfo()).select()
 	         .apis(RequestHandlerSelectors.basePackage("com.kollu.customer")).build();
 	   }
 	
 	private ApiInfo apiInfo() {
+		System.out.println("Console:: CustomerModuleApplication - Swagger - apiInfo method");
+		logger.info("CustomerModuleApplication - Swagger - apiInfo method");
 		return new ApiInfoBuilder().title("Welcome! Customer Micro Service")
 				.description("Customer Micro Service Swagger Document")
 				.build();
