@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -19,18 +20,23 @@ public class Customer {
 	private long customerId;
 	
 	@Column(name="First_Name")
+	@NotBlank(message = "Customer First Name is mandatory")
 	private String firstName;
 	
 	@Column(name="Last_Name")
+	@NotBlank(message = "Customer Last Name is mandatory")
 	private String lastName;
 	
 	@Column(name="Mobile_Number")
+	@NotBlank(message = "Customer Mobile no is mandatory")
 	private String mobileNumber;
 	
 	@Column(name="Gender")
+	@NotBlank(message = "Customer Gender Type is mandatory")
 	private String gender;
 	
 	@Column(name="Address")
+	@NotBlank(message = "Customer Address is mandatory")
 	private String address;
 
 	//default constructor

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +56,6 @@ public class CustomerController {
 		if (customers.isEmpty()) {
 			System.out.println("Console:: customers data size :: "+ customers.size());
 			logger.info("Banks customers size :: "+ customers.size()); 
-			//return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 			throw new RecordNotFoundException("Customer details not avilable.");
 		}
 		return new ResponseEntity<>(customers, HttpStatus.OK); 
@@ -62,7 +63,7 @@ public class CustomerController {
 	} catch (Exception e) {
 		System.out.println("Console:: CustomerController - getCustomerDetails - Error ::" +e.getMessage());
 		logger.error("CustomerController - getCustomerDetails - Error :: " +e.getMessage()); 
-		return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
 	} 
@@ -70,7 +71,7 @@ public class CustomerController {
 	/*Save customer details*/
 	
 	@PostMapping("/savecustomer")
-	public ResponseEntity<Customer> saveCustomer(@RequestBody Customer customer) {
+	public ResponseEntity<Customer> saveCustomer(@Valid @RequestBody Customer customer) {
 		
 		System.out.println("Console:: CustomerController - saveCustomer method");
 		logger.info("CustomerController - saveCustomer method"); 
@@ -87,14 +88,14 @@ public class CustomerController {
 		} catch (Exception e) {
 			System.out.println("Console:: CustomerController - saveCustomer - Error ::" +e.getMessage());
 			logger.error("CustomerController - saveCustomer - Error :: " +e.getMessage()); 
-			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 	
 	/*Update customer details based on {id}*/
 	
 	@PutMapping("/updatecustomer/{customerId}")
-	public ResponseEntity<Customer> updateCustomerDetails(@PathVariable("customerId") long custId, @RequestBody Customer customer) {
+	public ResponseEntity<Customer> updateCustomerDetails(@Valid @PathVariable("customerId") long custId, @Valid @RequestBody Customer customer) {
 		System.out.println("Console:: CustomerController - updateCustomerDetails method");
 		logger.info("CustomerController - updateCustomerDetails method"); 
 		logger.info("CustomerController - updateCustomerDetails method - custId :: "+custId); 
@@ -115,14 +116,14 @@ public class CustomerController {
 		} else {
 			System.out.println("Console:: CustomerController - updateCustomerDetails customerData ::" +customerData);
 			logger.debug("CustomerController - updateCustomerDetails customerData - :: "+customerData);
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 	
 	/*Delete customer based on {id}*/
 	
 	@DeleteMapping("/{customerId}")
-	public ResponseEntity<HttpStatus> deleteCustomer(@PathVariable("customerId") long custId) {
+	public ResponseEntity<HttpStatus> deleteCustomer(@Valid @PathVariable("customerId") long custId) {
 		System.out.println("Console:: CustomerController - deleteCustomer method");
 		logger.info("CustomerController - deleteCustomer method"); 
 		logger.info("CustomerController - deleteCustomer method - custId :: "+custId); 
@@ -161,7 +162,7 @@ public class CustomerController {
 	
 /*	Get the customer details by using {custId}*/
 	@GetMapping("/custById/{custId}")
-	public ResponseEntity<Customer> getCustomerById(@PathVariable("custId") long cid) {
+	public ResponseEntity<Customer> getCustomerById(@Valid @PathVariable("custId") long cid) {
 		System.out.println("Console:: CustomerController - getCustomerById method");
 		logger.info("CustomerController - getCustomerById method"); 
 		logger.info("CustomerController - getCustomerById method - cid :: "+cid);
@@ -179,63 +180,14 @@ public class CustomerController {
 			throw new RecordNotFoundException("Customer id not avilable.");
 		}
 	}
-	
-	/*	Get the customer details by using {custId}*/
-	/*@GetMapping("/custByIdd/{custId}")
-	@Retry(name="custRetryFallback", fallbackMethod="fallBackMethodResponse")
-	public CustomerResponse getCustomerByIdd(@PathVariable("custId") long cid) {
-		System.out.println("Customer getCustomerByIdd method");
 		
-		long custByID = 0; 
-		CustomerResponse custResponse = null;
-		ResponseEntity<CustomerResponse> responseEntity = null; 
-		
-		try {
-		Optional<Customer> custData = customerRepository.findById(cid);
-
-		if(custData.isPresent()) {
-			custByID = custData.get().getCustomerId();
-			System.out.println("custByID : "+custByID);
-		}
-		
-		Map<String, Long> uriVariables = new HashMap<>();
-		uriVariables.put("bankCustId", custByID);
-		
-		
-		responseEntity =new RestTemplate().getForEntity("http://localhost:9096/custBank/bankCustByIdd/{bankCustId}", 
-						CustomerResponse.class, uriVariables);
-		System.out.println("responseEntity.getBody() : "+responseEntity.getBody()); 
-		custResponse = responseEntity.getBody();
-		
-		
-		if (custResponse != null) {	
-			return new CustomerResponse(
-					custResponse.getBankCustId(), 
-					custResponse.getBankCustFirstName(), custResponse.getBankCustLastName(), 
-					custResponse.getBankCustMobileNumber(), custResponse.getBankCustGender(),
-					custResponse.getCustBankName(), 
-					custResponse.getCustBankIfscCode(), custResponse.getCustBankBranchAddress(), custResponse.getCustBankAccountNo());
-				} else {
-					System.out.println("customer else block");
-					return new CustomerResponse();
-				}
-		
-		} catch (Exception e) {
-			System.out.println("e ::"+e); 
-		}
-		//return responseEntity.getBody(); 
-		return custResponse;
-	} kollu commented*/
-	
-	
-	
 	/*	Get the customer details by using {custId}*/
 	
 	@GetMapping("/custByIdd/{custId}")
 	
 	/*Added fault tolerance feature*/
 	@Retry(name="custRetryFallback", fallbackMethod="fallBackCustomerByIdd")
-	public ResponseEntity<CustomerResponse> getCustomerByIdd(@PathVariable("custId") long cid) throws Exception {
+	public ResponseEntity<CustomerResponse> getCustomerByIdd(@Valid @PathVariable("custId") long cid) throws Exception {
 		System.out.println("Console:: CustomerController - getCustomerByIdd method");
 		logger.info("CustomerController - getCustomerByIdd method"); 
 		logger.info("CustomerController - getCustomerByIdd method - cid :: "+cid);
@@ -278,48 +230,12 @@ public class CustomerController {
 		}
 	}
 	
-	/*	Get the customer details by using {custId}
-	@GetMapping("/custByIddFeign/{custId}")
-	public CustomerResponse getCustomerByIddFeign(@PathVariable("custId") long cid) {
-		System.out.println("Customer getCustomerByIddFeign method");
-		
-		long custByID = 0; 
-		CustomerResponse custResponse = null;
-		//ResponseEntity<CustomerResponse> responseEntity;
-		
-		Optional<Customer> custData = customerRepository.findById(cid);
-
-		if(custData.isPresent()) {
-			custByID = custData.get().getCustomerId();
-			System.out.println("custByID : "+custByID);
-		}
-		
-		custResponse =customerBankFeignProxy.getCustomerDetailsById(custByID);
-		
-		if (custResponse != null) {	
-			return new CustomerResponse(
-					custResponse.getBankCustId(), 
-					custResponse.getBankCustFirstName(), custResponse.getBankCustLastName(), 
-					custResponse.getBankCustMobileNumber(), custResponse.getBankCustGender(),
-					custResponse.getCustBankName(), 
-					custResponse.getCustBankIfscCode(), custResponse.getCustBankBranchAddress(), custResponse.getCustBankAccountNo());
-			
-		} else {
-			System.out.println("customer else block");
-			return new CustomerResponse();
-		} 
-		
-		//return null;
-		
-	} kollu commented*/
-	
-	
 	/*	Get the customer details by using {custId}*/
 	@GetMapping("/custByIddFeign/{custId}")
 	
 	/*Added fault tolerance feature*/
 		@Retry(name="custRetryFallback", fallbackMethod="fallBackCustomerByIddFeign")
-	public ResponseEntity<CustomerResponse> getCustomerByIddFeign(@PathVariable("custId") long cid) throws Exception {
+	public ResponseEntity<CustomerResponse> getCustomerByIddFeign(@Valid @PathVariable("custId") long cid) throws Exception {
 		System.out.println("Console:: CustomerController - getCustomerByIddFeign method");
 		logger.info("CustomerController - getCustomerByIddFeign method"); 
 		logger.info("CustomerController - getCustomerByIddFeign method - cid :: "+cid);
