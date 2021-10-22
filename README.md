@@ -131,6 +131,17 @@ Customer : http://localhost:9095/swagger-ui.html
 Bank : http://localhost:9096/swagger-ui.html
 
 
+========================================================
+Distributed Tracing concept / Sleuth, ZipKin, RabbitMQ, --> To generate Unique id per one logger. 
+
+We need to download below given zipkin jar and run by open cmd prop
+zipkin-server-2.12.9-exec
+
+cmd/> java -jar zipkin-server-2.12.9-exec
+
+Zipkin URL : http://localhost:9411/
+
+
 
 
 
