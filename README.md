@@ -124,8 +124,12 @@ http://localhost:8765/custBank/getAllCustBankDetails
 
 http://localhost:8765/customerkollu/13
 
+Swagger Documentation:
 
-    
+Customer : http://localhost:9095/swagger-ui.html
+
+Bank : http://localhost:9096/swagger-ui.html
+
 
 
 
