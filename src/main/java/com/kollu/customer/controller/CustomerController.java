@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import com.kollu.customer.exception.RecordNotFoundException;
 import com.kollu.customer.feign.CustomerBankFeignProxy;
 import com.kollu.customer.model.Customer;
 import com.kollu.customer.model.CustomerResponse;
@@ -53,7 +54,8 @@ public class CustomerController {
 		if (customers.isEmpty()) {
 			System.out.println("Console:: customers data size :: "+ customers.size());
 			logger.info("Banks customers size :: "+ customers.size()); 
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			//return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			throw new RecordNotFoundException("Customer details not avilable.");
 		}
 		return new ResponseEntity<>(customers, HttpStatus.OK); 
 		
@@ -173,7 +175,8 @@ public class CustomerController {
 		} else {
 			System.out.println("Console:: CustomerController - getCustomerById custData ::" +custData);
 			logger.debug("CustomerController - getCustomerById custData - :: "+custData);
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			//return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			throw new RecordNotFoundException("Customer id not avilable.");
 		}
 	}
 	
@@ -232,7 +235,7 @@ public class CustomerController {
 	
 	/*Added fault tolerance feature*/
 	@Retry(name="custRetryFallback", fallbackMethod="fallBackCustomerByIdd")
-	public ResponseEntity<CustomerResponse> getCustomerByIdd(@PathVariable("custId") long cid) {
+	public ResponseEntity<CustomerResponse> getCustomerByIdd(@PathVariable("custId") long cid) throws Exception {
 		System.out.println("Console:: CustomerController - getCustomerByIdd method");
 		logger.info("CustomerController - getCustomerByIdd method"); 
 		logger.info("CustomerController - getCustomerByIdd method - cid :: "+cid);
@@ -248,6 +251,10 @@ public class CustomerController {
 			
 			System.out.println("Console:: CustomerController - getCustomerByIdd - custByID :: "+custByID);
 			logger.debug("CustomerController - getCustomerByIdd - custByID :: "+custByID);
+		} else {
+			System.out.println("Console:: CustomerController - getCustomerByIdd - custByID :: "+custByID);
+			logger.debug("CustomerController - getCustomerByIdd - custByID :: "+custByID);
+			throw new RecordNotFoundException("Customer id not avilable.");
 		}
 		
 		Map<String, Long> uriVariables = new HashMap<>();
@@ -267,7 +274,7 @@ public class CustomerController {
 		} else {
 			System.out.println("Console:: CustomerController - getCustomerByIdd - entity Response Body :: "+responseEntity.getBody());
 			logger.debug("CustomerController - getCustomerByIdd - entity Response Body :: "+responseEntity.getBody());
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 	
@@ -312,7 +319,7 @@ public class CustomerController {
 	
 	/*Added fault tolerance feature*/
 		@Retry(name="custRetryFallback", fallbackMethod="fallBackCustomerByIddFeign")
-	public ResponseEntity<CustomerResponse> getCustomerByIddFeign(@PathVariable("custId") long cid) {
+	public ResponseEntity<CustomerResponse> getCustomerByIddFeign(@PathVariable("custId") long cid) throws Exception {
 		System.out.println("Console:: CustomerController - getCustomerByIddFeign method");
 		logger.info("CustomerController - getCustomerByIddFeign method"); 
 		logger.info("CustomerController - getCustomerByIddFeign method - cid :: "+cid);
@@ -326,10 +333,10 @@ public class CustomerController {
 			custByID = custData.get().getCustomerId();
 			System.out.println("Console:: CustomerController - getCustomerByIddFeign - custByID :: "+custByID);
 			logger.debug("CustomerController - getCustomerByIddFeign - custByID :: "+custByID);
-			
 		} else {
 			System.out.println("Console:: CustomerController - getCustomerByIddFeign - custByID :: "+custByID);
 			logger.debug("CustomerController - getCustomerByIddFeign - custByID :: "+custByID);
+			throw new RecordNotFoundException("Customer id not avilable.");
 		}
 		
 		responseEntity =customerBankFeignProxy.getCustomerDetailsById(custByID);
@@ -345,32 +352,34 @@ public class CustomerController {
 		} else {
 			System.out.println("Console:: CustomerController - getCustomerByIddFeign - entity Response Body :: "+responseEntity.getBody());
 			logger.debug("CustomerController - getCustomerByIddFeign - entity Response Body :: "+responseEntity.getBody());
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
 	}
 	
 	/*All FallBack methods*/ 
 	
-	public ResponseEntity<Object> fallBackCustomerByIdd(Exception ex) {
+	public ResponseEntity<Object> fallBackCustomerByIdd(Exception ex) throws Exception { 
 		System.out.println("Console:: CustomerController - fallBackCustomerByIdd method");
 		logger.info("CustomerController - fallBackCustomerByIdd method");
 		
-		String msg ="Service down, Please wait some time.";
+		String msg ="Micro Service Down!!, Please wait some time.";
 		
 		System.out.println("Console:: CustomerController - fallBackCustomerByIdd Error :: "+ex.getMessage()); 
 		logger.error("CustomerController - fallBackCustomerByIdd Error :: "+ex.getMessage());
-		return new ResponseEntity<Object>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
+		//return new ResponseEntity<Object>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
+		throw new Exception(msg);
 }
 
-	public ResponseEntity<Object> fallBackCustomerByIddFeign(Exception ex) {
+	public ResponseEntity<Object> fallBackCustomerByIddFeign(Exception ex) throws Exception { 
 		System.out.println("Console:: CustomerController - fallBackCustomerByIddFeign method");
 		logger.info("CustomerController - fallBackCustomerByIddFeign method");
 		
-		String msg ="Service down, Please wait some time.";
+		String msg ="Micro Service Down!!, Please wait some time.";
 		
 		System.out.println("Console:: CustomerController - fallBackCustomerByIddFeign Error :: "+ex.getMessage()); 
 		logger.error("CustomerController - fallBackCustomerByIddFeign Error :: "+ex.getMessage());
-		return new ResponseEntity<Object>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
+		//return new ResponseEntity<Object>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
+		throw new Exception(msg);
 	}
 }
