@@ -9,8 +9,8 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.kollu.CustomerModule</groupId>
-	<artifactId>CustomerModule</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<artifactId>customermodule</artifactId>
+	<version>0.0.1-phase5</version>
 	<name>CustomerModule</name>
 	<description>CustomerModule SpringBoot and MicroServices project</description>
 	<properties>
@@ -69,7 +69,7 @@
     	</dependency>
     	
     	<!-- Distributed Tracing(To generate unique id per each logger) - sleuth,RabbitMQ,ZipKin -->
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-sleuth</artifactId>
 		</dependency>
@@ -80,7 +80,7 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-amqp</artifactId>
-		</dependency>
+		</dependency> -->
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -98,7 +98,8 @@
 		<dependency>
 			<groupId>com.oracle.database.jdbc</groupId>
 			<artifactId>ojdbc8</artifactId>
-			<scope>12.2.0.1</scope>
+			<!-- <scope>12.2.0.1</scope> -->
+			<version>12.2.0.1</version>
 		</dependency>
 		
 		<!-- Swagger api -->
@@ -133,6 +134,12 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<image>
+						<name>kolludocker/customer-${project.artifactId}:${project.version}</name>
+					</image>
+					<pullPolicy>IF_NOT_PRESENT</pullPolicy>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
