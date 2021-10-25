@@ -30,7 +30,8 @@ public class CircitBreaker {
 	public String getResponse() {
 		System.out.println("Console:: CircitBreaker - getResponse method");
 		logger.info("CircitBreaker - getResponse method"); 
-		ResponseEntity<String> entity = new RestTemplate().getForEntity("http://localhost:87611/", String.class);
+		//ResponseEntity<String> entity = new RestTemplate().getForEntity("http://localhost:87611/", String.class);
+		ResponseEntity<String> entity = new RestTemplate().getForEntity("http://172.20.10.3:87611/", String.class);
 		logger.debug("Entity Response Body :: "+ entity.getBody()); 
 		return entity.getBody(); 
 	}//end

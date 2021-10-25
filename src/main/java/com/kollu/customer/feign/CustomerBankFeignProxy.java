@@ -9,7 +9,7 @@ import com.kollu.customer.model.CustomerResponse;
 
 //@FeignClient(name="BankModule", url="localhost:9096") 
 //commented above line to test rest call to bank module through Eureka server
-@FeignClient(name="BankModule")
+@FeignClient(name="bankmodule")
 public interface CustomerBankFeignProxy {
 	
 	@GetMapping("/custBank/bankCustByIdd/{bankCustId}")

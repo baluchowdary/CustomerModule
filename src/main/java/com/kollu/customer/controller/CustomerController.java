@@ -212,8 +212,11 @@ public class CustomerController {
 		Map<String, Long> uriVariables = new HashMap<>();
 		uriVariables.put("bankCustId", custByID);
 		
-		responseEntity =new RestTemplate().getForEntity("http://localhost:9096/custBank/bankCustByIdd/{bankCustId}", 
-						CustomerResponse.class, uriVariables);
+		/*responseEntity =new RestTemplate().getForEntity("http://localhost:9096/custBank/bankCustByIdd/{bankCustId}", 
+						CustomerResponse.class, uriVariables);*/
+		
+		responseEntity =new RestTemplate().getForEntity("http://172.20.10.3:9096/custBank/bankCustByIdd/{bankCustId}", 
+				CustomerResponse.class, uriVariables);
 		custResponse = responseEntity.getBody();
 		
 		System.out.println("Console:: CustomerController - getCustomerByIdd - entity Response status code :: "+responseEntity.getStatusCode());

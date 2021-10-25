@@ -1,0 +1,16 @@
+version: '3.5'
+
+services:
+  customermodule:
+    image: kolludocker/customer-customermodule:0.0.1-phase5
+    mem_limit: 1024m
+    ports:
+      - "9095:9095"
+    networks:
+      - customermodule-network
+    environment:
+      - TZ="Asia/Kolkata"
+      
+networks:
+  customermodule-network:
+  
