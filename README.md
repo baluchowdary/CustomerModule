@@ -148,7 +148,7 @@ Below command to create network
 
 docker network create --driver bridge kollu-network
 
-Below command to run existing image and port doing port forwarding also
+Below command to run existing image and port forwarding also
 
 docker run -d --name xe --net kollu-network -p 1522:1521 thebookpeople/oracle-xe-11g --> 1522 is our localhost port and 1521 is container port
 
