@@ -135,11 +135,32 @@ Bank : http://localhost:9096/swagger-ui.html
 Distributed Tracing concept / Sleuth, ZipKin, RabbitMQ, --> To generate Unique id per each logger. 
 
 We need to download below given zipkin jar and run by open cmd prop
+
 zipkin-server-2.12.9-exec
 
-cmd/> java -jar zipkin-server-2.12.9-exec
+cmd/> java -jar zipkin-server-2.12.9-exec.jar
 
 Zipkin URL : http://localhost:9411/
+
+Docker:
+
+Below command to create network
+
+docker network create --driver bridge kollu-network
+
+Below command to run existing image and port doing port forwarding also
+
+docker run -d --name xe --net kollu-network -p 1522:1521 thebookpeople/oracle-xe-11g --> 1522 is our localhost port and 1521 is container port
+
+docker run --name myclient --net kollu-network -ti thebookpeople/oracle-xe-11g:latest /bin/bash
+
+#> sqlpluse system/oracle@xe/xe
+
+SQL> select * from tableName;
+
+
+
+
 
 
 
