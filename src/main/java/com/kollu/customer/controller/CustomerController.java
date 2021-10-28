@@ -11,6 +11,7 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -37,6 +38,8 @@ public class CustomerController {
 
 	private Logger logger = LoggerFactory.getLogger(CustomerController.class);
 	
+	@Value("${spring.bankmoduleURL}")
+	private String bankModuleURL;
 	@Autowired
 	private CustomerRepository customerRepository;
 	
@@ -212,11 +215,11 @@ public class CustomerController {
 		Map<String, Long> uriVariables = new HashMap<>();
 		uriVariables.put("bankCustId", custByID);
 		
-		/*responseEntity =new RestTemplate().getForEntity("http://localhost:9096/custBank/bankCustByIdd/{bankCustId}", 
-						CustomerResponse.class, uriVariables);*/
+		responseEntity =new RestTemplate().getForEntity(bankModuleURL, 
+						CustomerResponse.class, uriVariables);
 		
-		responseEntity =new RestTemplate().getForEntity("http://172.20.10.3:9096/custBank/bankCustByIdd/{bankCustId}", 
-				CustomerResponse.class, uriVariables);
+		/*responseEntity =new RestTemplate().getForEntity("http://172.20.10.3:9096/custBank/bankCustByIdd/{bankCustId}", 
+				CustomerResponse.class, uriVariables);*/
 		custResponse = responseEntity.getBody();
 		
 		System.out.println("Console:: CustomerController - getCustomerByIdd - entity Response status code :: "+responseEntity.getStatusCode());
