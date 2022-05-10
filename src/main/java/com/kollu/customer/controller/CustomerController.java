@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +30,8 @@ import com.kollu.customer.exception.RecordNotFoundException;
 import com.kollu.customer.feign.CustomerBankFeignProxy;
 import com.kollu.customer.model.Customer;
 import com.kollu.customer.model.CustomerResponse;
+import com.kollu.customer.security.entity.AuthRequest;
+import com.kollu.customer.security.util.JwtUtil;
 import com.kollu.customer.service.CustomerRepository;
 
 import io.github.resilience4j.retry.annotation.Retry;
@@ -45,6 +49,26 @@ public class CustomerController {
 	
 	@Autowired
 	private CustomerBankFeignProxy customerBankFeignProxy;
+	
+	/*JWT Security*/
+	@Autowired
+    private JwtUtil jwtUtil;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    
+    /*JWT Security*/
+	@PostMapping("/authenticate")
+    public String generateToken(@RequestBody AuthRequest authRequest) throws Exception {
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(authRequest.getUserName(), authRequest.getPassword())
+            );
+        } catch (Exception ex) {
+            throw new Exception("inavalid username/password");
+        }
+        return jwtUtil.generateToken(authRequest.getUserName());
+    }
+	
 	/*Fetch All customer details*/
 	
 	@GetMapping("/getAllCustomers")
